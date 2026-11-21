@@ -1,0 +1,19 @@
+{
+  "name": "bookend-catalog-reading-service",
+  "version": "1.0.0",
+  "description": "Book catalog, adaptations, reviews, ratings and personal library microservice",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node src/index.js",
+    "test": "node tests/catalog.test.js"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.5",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "uuid": "^10.0.0"
+  }
+}

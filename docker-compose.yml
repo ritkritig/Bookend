@@ -1,0 +1,137 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: bookend-rabbitmq
+    ports:
+      - "5672:5672"   # AMQP protocol
+      - "15672:15672" # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+      dockerfile: Dockerfile
+    container_name: bookend-gateway
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - IDENTITY_SERVICE_URL=http://identity-service:4001
+      - CATALOG_SERVICE_URL=http://catalog-reading-service:4002
+      - SOCIAL_SERVICE_URL=http://social-service:4003
+      - RECOMMENDATION_SERVICE_URL=http://recommendation-service:4004
+      - ENGAGEMENT_SERVICE_URL=http://engagement-service:4005
+    depends_on:
+      - identity-service
+      - catalog-reading-service
+      - social-service
+      - recommendation-service
+      - engagement-service
+
+  identity-service:
+    build:
+      context: ./services/identity-service
+      dockerfile: Dockerfile
+    container_name: bookend-identity
+    ports:
+      - "4001:4001"
+    environment:
+      - PORT=4001
+      - JWT_SECRET=bookend_super_secure_jwt_secret_editorial_2026_key
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+    volumes:
+      - identity_data:/app/data
+
+  catalog-reading-service:
+    build:
+      context: ./services/catalog-reading-service
+      dockerfile: Dockerfile
+    container_name: bookend-catalog
+    ports:
+      - "4002:4002"
+    environment:
+      - PORT=4002
+      - JWT_SECRET=bookend_super_secure_jwt_secret_editorial_2026_key
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - catalog_data:/app/data
+
+  social-service:
+    build:
+      context: ./services/social-service
+      dockerfile: Dockerfile
+    container_name: bookend-social
+    ports:
+      - "4003:4003"
+    environment:
+      - PORT=4003
+      - JWT_SECRET=bookend_super_secure_jwt_secret_editorial_2026_key
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - social_data:/app/data
+
+  recommendation-service:
+    build:
+      context: ./services/recommendation-service
+      dockerfile: Dockerfile
+    container_name: bookend-recommendation
+    ports:
+      - "4004:4004"
+    environment:
+      - PORT=4004
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - recommendation_data:/app/data
+
+  engagement-service:
+    build:
+      context: ./services/engagement-service
+      dockerfile: Dockerfile
+    container_name: bookend-engagement
+    ports:
+      - "4005:4005"
+    environment:
+      - PORT=4005
+      - JWT_SECRET=bookend_super_secure_jwt_secret_editorial_2026_key
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - engagement_data:/app/data
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: bookend-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api-gateway
+
+volumes:
+  rabbitmq_data:
+  identity_data:
+  catalog_data:
+  social_data:
+  recommendation_data:
+  engagement_data:

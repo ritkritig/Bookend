@@ -1,0 +1,30 @@
+{
+  "name": "bookend",
+  "version": "1.0.0",
+  "description": "Bookend - Social discovery ecosystem for books and screen adaptations with genuine microservices architecture",
+  "scripts": {
+    "dev": "node scripts/dev-all.js",
+    "start": "node scripts/dev-all.js",
+    "dev:gateway": "node services/api-gateway/src/index.js",
+    "dev:identity": "node services/identity-service/src/index.js",
+    "dev:catalog": "node services/catalog-reading-service/src/index.js",
+    "dev:social": "node services/social-service/src/index.js",
+    "dev:recommendation": "python -m uvicorn app.main:app --host 0.0.0.0 --port 4004 --app-dir services/recommendation-service",
+    "dev:engagement": "node services/engagement-service/src/index.js",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "seed:all": "node scripts/seed-all.js",
+    "test:integration": "node tests/integration-event-flow.test.js",
+    "test": "node tests/run-all-tests.js"
+  },
+  "keywords": [
+    "microservices",
+    "bookend",
+    "rabbitmq",
+    "event-driven",
+    "fastapi",
+    "express",
+    "react"
+  ],
+  "author": "Bookend Team",
+  "license": "MIT"
+}

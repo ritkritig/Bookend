@@ -1,0 +1,20 @@
+{
+  "name": "bookend-identity-service",
+  "version": "1.0.0",
+  "description": "Identity and User Authentication Microservice",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node src/index.js",
+    "test": "node tests/identity.test.js"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.5",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "uuid": "^10.0.0"
+  }
+}
