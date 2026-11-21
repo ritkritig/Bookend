@@ -138,42 +138,43 @@ Bookend is decomposed according to **business capabilities**, with the goal of m
 Each backend service runs as an independent process and owns its corresponding data boundary.
 
 ```text
-                           ┌───────────────────────────┐
-                           │   React 19 + TypeScript   │
-                           │      Frontend :3000       │
-                           └─────────────┬─────────────┘
-                                         │
-                                   HTTP / REST
-                                         │
-                           ┌─────────────▼─────────────┐
-                           │        API Gateway        │
-                           │          :4000            │
-                           └─────────────┬─────────────┘
-                                         │
-              ┌──────────────────────────┼──────────────────────────┐
-              │                          │                          │
-              ▼                          ▼                          ▼
-       Identity Service        Catalog & Reading             Social Service
-           :4001                    :4002                        :4003
-        Node.js/Express          Node.js/Express              Node.js/Express
-              │                          │                          │
-              │                          └──────────┬───────────────┘
-              │                                     │
-              │                              Domain Events
-              │                                     ▼
-              │                          ┌─────────────────────┐
-              │                          │      RabbitMQ       │
-              │                          │  bookend.events     │
-              │                          └─────────┬───────────┘
-              │                                    │
-              │                       ┌────────────┴────────────┐
-              │                       ▼                         ▼
-              │              Recommendation              Engagement
-              │                  Service                   Service
-              │                   :4004                     :4005
-              │              Python/FastAPI             Node.js/Express
-              │
-              └────────────────────────────────────────────────────────
+                         ┌──────────────────────────┐
+                         │ React 19 + TypeScript    │
+                         │ Frontend — Port 3000     │
+                         └────────────┬─────────────┘
+                                      │
+                                  HTTP / REST
+                                      │
+                         ┌────────────▼─────────────┐
+                         │       API Gateway        │
+                         │       Port 4000          │
+                         └────────────┬─────────────┘
+                                      │
+                ┌─────────────────────┼─────────────────────┐
+                │                     │                     │
+                ▼                     ▼                     ▼
+       ┌────────────────┐   ┌──────────────────┐   ┌────────────────┐
+       │ Identity       │   │ Catalog & Reading│   │ Social         │
+       │ Service :4001  │   │ Service :4002    │   │ Service :4003  │
+       │ Node/Express   │   │ Node/Express     │   │ Node/Express   │
+       └────────────────┘   └─────────┬────────┘   └───────┬────────┘
+                                      │                    │
+                                      │   Domain Events    │
+                                      └─────────┬──────────┘
+                                                ▼
+                                    ┌─────────────────────┐
+                                    │      RabbitMQ       │
+                                    │   bookend.events    │
+                                    └──────────┬──────────┘
+                                               │
+                              ┌────────────────┴────────────────┐
+                              │                                 │
+                              ▼                                 ▼
+                    ┌──────────────────┐              ┌──────────────────┐
+                    │ Recommendation   │              │ Engagement       │
+                    │ Service :4004    │              │ Service :4005    │
+                    │ Python/FastAPI   │              │ Node/Express     │
+                    └──────────────────┘              └──────────────────┘
 ```
 
 ---
